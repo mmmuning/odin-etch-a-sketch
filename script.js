@@ -1,12 +1,38 @@
 const gridContainer = document.querySelector(".grid-container");
 const clearBtn = document.querySelector("#clear-btn");
+
 clearBtn.addEventListener("click", clearGrid);
 
-function clearGrid() {
-  // Removes grid container first child until none remains
-  while (gridContainer.firstChild) {
-    gridContainer.removeChild(gridContainer.firstChild);
+// Removes parent's first child until none remains
+function removeAllChildren(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
   }
+}
+
+// Makes divs based on the inputted size
+function makeGrid(gridSize = 16) {
+  for (let row = 0; row < gridSize; row++) {
+    let gridRow = document.createElement("div");
+    gridRow.classList.add("grid-row");
+
+    for (let col = 0; col < gridSize; col++) {
+      let gridCell = document.createElement("div");
+      gridCell.classList.add("grid-cell");
+
+      // Add mouseover event listener for the "hover-effect"
+      gridCell.addEventListener("mouseover", () => hoverEffect(gridCell));
+
+      gridRow.appendChild(gridCell);
+    }
+
+    gridContainer.appendChild(gridRow);
+  }
+}
+
+function clearGrid() {
+  // Remove gridContainer's children
+  removeAllChildren(gridContainer);
 
   // Prompt user to enter new grid size
   let gridSize = parseInt(
@@ -21,19 +47,33 @@ function clearGrid() {
   }
 }
 
-function makeGrid(gridSize = 16) {
-  for (let i = 0; i < gridSize; i++) {
-    let gridRow = document.createElement("div");
-    gridRow.classList.add("grid-row");
+// Generate random values for red, green, and blue components (0-255)
+function getRandomRGBColor() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  const a = 0.1;
 
-    for (let i = 0; i < gridSize; i++) {
-      let gridCell = document.createElement("div");
-      gridCell.classList.add("grid-cell");
-      gridRow.appendChild(gridCell);
-    }
+  return `${r}, ${g}, ${b}`;
+}
 
-    gridContainer.appendChild(gridRow);
+function hoverEffect(element) {
+  const newColor = getRandomRGBColor();
+
+  if (element.dataset.backgroundColor === undefined) {
+    element.dataset.backgroundColor = newColor;
+    element.dataset.opacity = 0.1;
+  } else {
+    element.dataset.opacity = Math.min(
+      parseFloat(element.dataset.opacity) + 0.1,
+      1
+    );
   }
+
+  element.setAttribute(
+    "style",
+    `background-color: rgba(${element.dataset.backgroundColor}, ${element.dataset.opacity});`
+  );
 }
 
 // Make grids on page load (default is 16 grids)
