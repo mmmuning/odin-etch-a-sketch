@@ -40,8 +40,10 @@ function clearGrid() {
   );
 
   // Validate input
-  if (isNaN(gridSize) || gridSize < 1 || gridSize > 100) {
+  if (isNaN(gridSize) || gridSize < 1 || gridSize > 100 || !gridSize) {
     alert("Please enter a valid number between 1 and 100.");
+    // Set to default 16x16 grid
+    makeGrid(16);
   } else {
     makeGrid(gridSize);
   }
